@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"> -->
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <title>洛天依大悦城-扫码确认</title>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script src="https://cdn.dayanweb.cn/cxTest/isuzu/js/zepto.min.js"></script>
+    <style>
+        .fc{
+            display: flex;
+            justify-content: center;
+        }
+        .fc h1{
+            /* color:blue; */
+            width: 100%;
+            text-align: center;
+            line-height: 1;
+            font-weight: 900;
+            margin: 0;
+            margin-top: 50px;
+        }
+        .fc h3{
+            color:#737373;
+            width: 100%;
+            text-align: center;
+            line-height: 1;
+            margin: 0;
+            margin-top: 15px;
+            margin-bottom: 30px;
+        }
+        .tc{
+            text-align: center;
+        }
+        .scanbtn{
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            border: none;
+            background-color: #d81e06;
+            color: white;
+            font-weight: 400;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .h4{
+            margin: 0;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .confirmBtn{
+            width: 200px;
+            height: 50px;
+            border: 0;
+            background-color: #d81e06;
+            color: white;
+            font-size: 16px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+        .bggrey{
+            background-color: #999;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="fc">
+        <div>
+        <h1>洛天依大悦城</h1>
+        <h3>工作人员扫码确认</h3>
+    </div>
+    </div>
+    <div class="fc">
+        <button class="scanbtn" onclick="scanQrcode()">
+            <svg  width="50" height="50" t="1655350268666" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2136"><path d="M42.666667 341.333333c-23.466667 0-42.666667-19.2-42.666667-42.666666V106.666667c0-59.733333 46.933333-106.666667 106.666667-106.666667h192c23.466667 0 42.666667 19.2 42.666666 42.666667s-19.2 42.666667-42.666666 42.666666H106.666667c-10.666667 0-21.333333 10.666667-21.333334 21.333334v192c0 23.466667-19.2 42.666667-42.666666 42.666666zM981.333333 341.333333c-23.466667 0-42.666667-19.2-42.666666-42.666666V106.666667c0-10.666667-10.666667-21.333333-21.333334-21.333334h-192c-23.466667 0-42.666667-19.2-42.666666-42.666666s19.2-42.666667 42.666666-42.666667h192c59.733333 0 106.666667 46.933333 106.666667 106.666667v192c0 23.466667-19.2 42.666667-42.666667 42.666666zM917.333333 1024h-192c-23.466667 0-42.666667-19.2-42.666666-42.666667s19.2-42.666667 42.666666-42.666666h192c10.666667 0 21.333333-10.666667 21.333334-21.333334v-192c0-23.466667 19.2-42.666667 42.666666-42.666666s42.666667 19.2 42.666667 42.666666v192c0 59.733333-46.933333 106.666667-106.666667 106.666667zM298.666667 1024H106.666667c-59.733333 0-106.666667-46.933333-106.666667-106.666667v-192c0-23.466667 19.2-42.666667 42.666667-42.666666s42.666667 19.2 42.666666 42.666666v192c0 10.666667 10.666667 21.333333 21.333334 21.333334h192c23.466667 0 42.666667 19.2 42.666666 42.666666s-19.2 42.666667-42.666666 42.666667z" p-id="2137" fill="#ffffff"></path><path d="M981.333333 565.333333H42.666667c-23.466667 0-42.666667-19.2-42.666667-42.666666s19.2-42.666667 42.666667-42.666667h938.666666c23.466667 0 42.666667 19.2 42.666667 42.666667s-19.2 42.666667-42.666667 42.666666z" p-id="2138" fill="#ffffff"></path></svg>
+                          <br>点击扫一扫</button>
+    </div>
+    <div class="fc">
+    <div id="checkpage" class="tc">
+        <!-- <div id="name"></div>
+        <div id="phone"></div>
+        <div id="address"></div>
+        <div onclick="checkedUser()">确认</div> -->
+    </div>
+</div>
+<script>
+var currentUserId= null;
+$.ajax({
+  type: "POST",
+  url: "https://h5.dayanweb.cn/jssdk/jssdk_duode.php",
+  data: {
+    wxurl: encodeURI(decodeURI(window.location.href.split("#")[0])),
+  },
+  success: function (res) {
+    console.log(res);
+    res = JSON.parse(res);
+    // res = res.data;
+    // alert(customShareInfo.link);
+    wx.config({
+      debug: false,
+      appId: res.appId,
+      timestamp: parseInt(res.timestamp),
+      nonceStr: res.nonceStr,
+      signature: res.signature,
+      jsApiList: [
+        "scanQRCode"
+      ],
+    });
+    wx.ready(function () {
+    });
+  },
+});
+function scanQrcode(){
+    wx.scanQRCode({
+            needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+            scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+            success: function (res) {
+                var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+                // alert(res.resultStr)
+        
+                // 通过二维码参数获取用户信息
+                var id = getUrlParam(res.resultStr,'id');
+                console.log(res)
+                $('#checkpage').html('<h3>查询中...</h3>');
+                currentUserId= null;
+                if(res.resultStr && id !=false && id){
+                    $.ajax({
+                        type: "POST",
+                        url: "https://www.dalalapic.com/h5/2022invitation/api/public/index.php/api/v1/getUserInfoById",
+                        data: {
+                            id: id
+                        },
+                        success: function (res) {
+                            console.log(res)
+                            if((res.data && res.data.length) || res.data.constructor === Object){
+                                var info = '<h4>姓名：'+res.data.name+'</h4>'+
+                                '<h4>电话：'+res.data.phone+'</h4>'+
+                                '<h4>地址：'+res.data.address+'</h4>';
+                                if(res.data.checked==1){
+                                    info = info+'<button class="confirmBtn bggrey" disabled="disabled">已经签到</button>'
+                                }else{
+                                    currentUserId= id;
+                                    info = info+'<button class="confirmBtn" onclick="checkedUser()">确认签到</button>'
+                                }
+                                $('#checkpage').empty();
+                                $('#checkpage').append(info);
+                            }else{
+                                $('#checkpage').html('<h3>未查到用户信息！</h3>');
+                            }
+                        },
+                        error: function(res){
+                            console.log(res)
+                        }
+                    })
+                }else{
+                    $('#checkpage').html('<h4>未查到用户信息！</h4>');
+                }
+                
+            }
+        });
+}
+
+function checkedUser(){
+    if(currentUserId){
+        $.ajax({
+            type: "POST",
+            url: "https://www.dalalapic.com/h5/2022invitation/api/public/index.php/api/v1/checkUser",
+            data: {
+                id: currentUserId,
+                action:'check',
+            },
+            success: function (res) {
+                alert('确认签到成功！')
+                $('.confirmBtn').text('已经签到');
+                $('.confirmBtn').addClass('bggrey');
+                $('.confirmBtn').attr('disabled', 'disabled');
+            },
+            error:function(){
+                alert('确认签到失败！')
+            }
+        })
+    }
+}
+
+
+function getUrlParam(sUrl, sKey) {
+    let sParam = sUrl.split("?")[1].split("#")[0];  //key=1&key=2&key=3&test=4
+    let arr = sParam.split("&"); //["key=1","key=2","key=3","test=4"]
+    let res;
+    if( sKey ){//如果指定参数
+    	res = [];
+    	for( let i = 0; i < arr.length; i++ ){
+    		var temp = arr[i].split("=");
+    		if( temp[0] === sKey ){
+    			res.push( temp[1] ); //res只存储指定key值的结果
+    		}
+    	}
+    	if( res.length == 1 ){
+    		return res[0];
+    	}else if( res.length == 0 ){
+    		return "";
+    	}else{
+    		return res;
+    	}
+    	
+    }
+    else{//如果不指定参数
+    	res = {};
+    	if( sParam==undefined || sParam=="" ){
+    		return res;
+   		}
+    	for( let i = 0; i < arr.length; i++ ){
+    		var temp = arr[i].split("=");
+    		if( !(temp[0] in res) ){
+    			res[temp[0]] = []; //temp[0]为键，temp[1]的数组为值
+    		}
+    		res[temp[0]].push(temp[1]); //使用变量动态访问对象属性用obj[a]不能用obj.a
+    	}
+    	
+    }
+    return res;
+}
+
+
+
+
+
+
+
+    </script>
+    <!-- <script src="https://cdn.dayanweb.cn/cxTest/2022invitation/vconsole.min.js"></script>
+    <script>
+      // 初始化
+      var vConsole = new VConsole();
+      console.log('Hello world');
+    </script> -->
+</body>
+</html>
+
+  
