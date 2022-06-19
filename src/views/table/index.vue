@@ -30,6 +30,20 @@
           :value="item.key"
         />
       </el-select>
+      <el-select
+        v-model="listQuery.source"
+        placeholder="来源"
+        clearable
+        class="filter-item"
+        style="width: 108px"
+      >
+        <el-option
+          v-for="item in sourceOptions"
+          :key="item.key"
+          :label="item.label"
+          :value="item.key"
+        />
+      </el-select>
 
       <el-button
         v-waves
@@ -48,7 +62,27 @@
         style="margin-left: 0"
         @click="handleDownload"
       >
-        导出Excel
+        导出所有
+      </el-button>
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-download"
+        style="margin-left: 0"
+        @click="handleDownload1"
+      >
+      导出媒体
+      </el-button>
+            <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-download"
+        style="margin-left: 0"
+        @click="handleDownload2"
+      >
+        导出来宾客
       </el-button>
     </div>
 
@@ -105,7 +139,11 @@
           {{ scope.row.address }}
         </template>
       </el-table-column>
-
+      <el-table-column label="渠道" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.source }}
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         label="创建时间"
@@ -118,6 +156,18 @@
           <span>{{ scope.row.create_time }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column
+        align="center"
+        label="操作"
+        sortable
+        prop="create_time"
+      >
+        <template slot-scope="scope">
+         <el-button @click="delUser(scope.row.id)">删除</el-button>
+        </template>
+      </el-table-column>
+
     </el-table>
     <pagination
       :total="total"
@@ -131,7 +181,7 @@
 <script>
 import { getList } from '@/api/table'
 import Pagination from '@/components/Pagination'
-import { checkUser } from '@/api/user'
+import { checkUser,delUserById } from '@/api/user'
 export default {
   components: { Pagination },
   filters: {
@@ -151,6 +201,10 @@ export default {
         { label: '未签到', key: '0' },
         { label: '已签到', key: '1' }
       ],
+      sourceOptions: [
+        { label: '媒体', key: '媒体' },
+        { label: '来宾', key: '来宾' }
+      ],
       list: null,
       listLoading: true,
       total: 0,
@@ -160,6 +214,7 @@ export default {
         phone: undefined,
         name: undefined,
         checked: undefined,
+        source:undefined,
         create_time: undefined,
         sort: '+id'
       }
@@ -193,6 +248,16 @@ export default {
       window.location.href =
         'https://www.dalalapic.com/h5/2022invitation/api/public/index.php/api/v1/exportExcel'
     },
+    handleDownload1(){
+       window.location.href =
+        'https://www.dalalapic.com/h5/2022invitation/api/public/index.php/api/v1/exportMediaExcel'
+    
+    },
+    handleDownload2(){
+       window.location.href =
+        'https://www.dalalapic.com/h5/2022invitation/api/public/index.php/api/v1/exportLbExcel'
+    
+    },
     // 排序变化
     sortChange(data) {
       const { prop, order } = data
@@ -222,6 +287,16 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       })
+    },
+    delUser(id){
+      this.listLoading = true
+      delUserById({id:id}).then((response) => {
+        this.listLoading = false
+        this.fetchData()
+      }).catch((err)=>{
+        console.log(err)
+        this.listLoading = false
+      })
     }
   }
 }
@@ -232,6 +307,7 @@ export default {
   margin-bottom: 20px;
   .filter-item{
     margin-right: 10px;
+    margin-bottom: 10px;
   }
 }
 @media screen and (max-width: 1000px) { 

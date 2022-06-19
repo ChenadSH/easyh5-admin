@@ -29,6 +29,14 @@ export function checkUser(data) {
     data
   })
 }
+export function delUserById(data) {
+  return request({
+    url: '/delUserById',
+    method: 'post',
+    data
+  })
+}
+
 
 export function getChartsInfo(data) {
   return request({
