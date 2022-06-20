@@ -72,9 +72,9 @@
         style="margin-left: 0"
         @click="handleDownload1"
       >
-      导出媒体
+        导出媒体
       </el-button>
-            <el-button
+      <el-button
         v-waves
         class="filter-item"
         type="primary"
@@ -100,6 +100,16 @@
         <template slot-scope="scope">
           <!-- {{ scope.$index }} -->
           {{ scope.row.id }}
+        </template>
+      </el-table-column>
+      <el-table-column label="微信昵称" width="100">
+        <template slot-scope="scope">
+          {{ scope.row.wxname }}
+        </template>
+      </el-table-column>
+      <el-table-column style="text-align:center;" label="微信头像" width="100">
+        <template slot-scope="scope">
+          <el-avatar size="medium" shape="square" :src="scope.row.wxheadurl" />
         </template>
       </el-table-column>
       <el-table-column label="姓名" width="100">
@@ -157,17 +167,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column
-        align="center"
-        label="操作"
-        sortable
-        prop="create_time"
-      >
+      <el-table-column align="center" label="操作" sortable prop="create_time">
         <template slot-scope="scope">
-         <el-button @click="delUser(scope.row.id)">删除</el-button>
+          <el-button @click="delUser(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
-
     </el-table>
     <pagination
       :total="total"
@@ -181,7 +185,7 @@
 <script>
 import { getList } from '@/api/table'
 import Pagination from '@/components/Pagination'
-import { checkUser,delUserById } from '@/api/user'
+import { checkUser, delUserById } from '@/api/user'
 export default {
   components: { Pagination },
   filters: {
@@ -214,9 +218,9 @@ export default {
         phone: undefined,
         name: undefined,
         checked: undefined,
-        source:undefined,
+        source: undefined,
         create_time: undefined,
-        sort: '+id'
+        sort: undefined
       }
     }
   },
@@ -248,15 +252,13 @@ export default {
       window.location.href =
         'https://www.dalalapic.com/h5/2022invitation/api/public/index.php/api/v1/exportExcel'
     },
-    handleDownload1(){
-       window.location.href =
+    handleDownload1() {
+      window.location.href =
         'https://www.dalalapic.com/h5/2022invitation/api/public/index.php/api/v1/exportMediaExcel'
-    
     },
-    handleDownload2(){
-       window.location.href =
+    handleDownload2() {
+      window.location.href =
         'https://www.dalalapic.com/h5/2022invitation/api/public/index.php/api/v1/exportLbExcel'
-    
     },
     // 排序变化
     sortChange(data) {
@@ -288,39 +290,42 @@ export default {
         this.listLoading = false
       })
     },
-    delUser(id){
+    delUser(id) {
       this.listLoading = true
-      delUserById({id:id}).then((response) => {
-        this.listLoading = false
-        this.fetchData()
-      }).catch((err)=>{
-        console.log(err)
-        this.listLoading = false
-      })
+      delUserById({ id: id })
+        .then((response) => {
+          this.listLoading = false
+          this.fetchData()
+        })
+        .catch((err) => {
+          console.log(err)
+          this.listLoading = false
+        })
     }
   }
 }
 </script>
 <style scoped lang="scss">
-.filter-container{
+.filter-container {
   // margin-top: 20px;
   margin-bottom: 20px;
-  .filter-item{
+  .filter-item {
     margin-right: 10px;
     margin-bottom: 10px;
   }
 }
-@media screen and (max-width: 1000px) { 
- .filter-container{
-  margin-bottom: 20px;
+@media screen and (max-width: 1000px) {
+  .filter-container {
+    margin-bottom: 20px;
 
-  .filter-item{
-    margin-right: 10px;
+    .filter-item {
+      margin-right: 10px;
       margin-bottom: 20px;
+    }
+  }
+  .pagination-container {
+    padding-left: 0;
   }
 }
-.pagination-container{
-  padding-left: 0;
-}
-}
+
 </style>
