@@ -7,3 +7,10 @@ export function getList(params) {
     params
   })
 }
+export function getWhiteList(params) {
+  return request({
+    url: '/getWhiteList',
+    method: 'post',
+    params
+  })
+}
